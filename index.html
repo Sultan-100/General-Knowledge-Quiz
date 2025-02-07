@@ -147,7 +147,25 @@
         score = 0;
         timeRemaining = level === 'impossible' || level === 'asian' ? 60 : 30; // 1 minute timer for Impossible and Asian
         loadQuestion();
-     let currentQuestionIndex = 0;
+        startTimer();
+    }
+    
+    function startTimer() {
+        document.getElementById("timer").textContent = Time: ${timeRemaining}s;
+        timer = setInterval(function() {
+            timeRemaining--;
+            document.getElementById("timer").textContent = Time: ${timeRemaining}s;
+            if (timeRemaining <= 0) {
+                clearInterval(timer);
+                checkAnswer(""); // Auto-move to the next question if time runs out
+            }
+        }, 1000);
+    }
+
+
+        
+
+       let currentQuestionIndex = 0;
 let score = 0;
 let selectedLevel = "easy";
 let timer;
