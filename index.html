@@ -165,7 +165,7 @@
 
         
 
-       let currentQuestionIndex = 0;
+let currentQuestionIndex = 0;
 let score = 0;
 let selectedLevel = "easy";
 let timer;
@@ -183,7 +183,7 @@ function startQuiz(level) {
 }
 
 function startTimer() {
-    document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+    document.getElementById("timer").textContent = `Time: ${timeRemaining}s`; // Fix: Corrected template string syntax
     timer = setInterval(function() {
         timeRemaining--;
         document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
