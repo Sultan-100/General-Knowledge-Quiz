@@ -139,6 +139,32 @@
             ]
         };
 
+    function startQuiz(level) {
+        selectedLevel = level;
+        document.getElementById("start-screen").style.display = "none";
+        document.getElementById("quiz-container").style.display = "block";
+        currentQuestionIndex = 0;
+        score = 0;
+        timeRemaining = level === 'impossible' || level === 'asian' ? 60 : 30; // 1 minute timer for Impossible and Asian
+        loadQuestion();
+        startTimer();
+    }
+    
+    function startTimer() {
+        document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+        timer = setInterval(function() {
+            timeRemaining--;
+            document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+            if (timeRemaining <= 0) {
+                clearInterval(timer);
+                checkAnswer(""); // Auto-move to the next question if time runs out
+            }
+        }, 1000);
+    }
+
+
+        
+
         let currentQuestionIndex = 0;
         let score = 0;
         let selectedLevel = "easy";
@@ -151,21 +177,9 @@
             document.getElementById("quiz-container").style.display = "block";
             currentQuestionIndex = 0;
             score = 0;
-            timeRemaining = (level === 'impossible' || level === 'asian') ? 60 : 30;
+            timeRemaining = 30;
             loadQuestion();
             startTimer();
-        }
-
-        function startTimer() {
-            document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
-            timer = setInterval(function() {
-                timeRemaining--;
-                document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
-                if (timeRemaining <= 0) {
-                    clearInterval(timer);
-                    checkAnswer(""); // Auto-move to the next question if time runs out
-                }
-            }, 1000);
         }
 
         function loadQuestion() {
@@ -194,6 +208,18 @@
             currentQuestionIndex++;
             loadQuestion();
             startTimer(); // Restart timer for the next question
+        }
+
+        function startTimer() {
+            document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+            timer = setInterval(function() {
+                timeRemaining--;
+                document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+                if (timeRemaining <= 0) {
+                    clearInterval(timer);
+                    checkAnswer(""); // Auto-move to the next question if time runs out
+                }
+            }, 1000);
         }
 
         function showScoreScreen() {
