@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>General Knowledge Quiz</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .quiz-container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 3px 3px 15px #aaa;
+            background-color: white;
+            display: none;
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+        }
+        .options button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        .score-screen {
+            display: none;
+        }
+        .start-screen {
+            display: block;
+        }
+        .start-button {
+            padding: 15px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            background-color: #4a2dcb;
+            color: white;
+            display: block;
+            width: 200px;
+            margin: 10px auto;
+        }
+        .start-button:hover {
+            background-color: #7f7ee4;
+        }
+        .timer {
+            font-size: 18px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="start-screen" id="start-screen">
+        <h2>Choose Difficulty</h2>
+        <button class="start-button" onclick="startQuiz('easy')">Easy</button>
+        <button class="start-button" onclick="startQuiz('medium')">Medium</button>
+        <button class="start-button" onclick="startQuiz('hard')">Hard</button>
+        <button class="start-button" onclick="startQuiz('impossible')">Impossible</button>
+        <button class="start-button" onclick="startQuiz('asian')">Asian</button>
+    </div>
+    
+    <div class="quiz-container" id="quiz-container">
+        <h2>General Knowledge Quiz</h2>
+        <p class="timer" id="timer">Time: 30s</p>
+        <div id="question-container">
+            <p class="question" id="question"></p>
+            <div class="options" id="options"></div>
+        </div>
+        <p class="result" id="result"></p>
+    </div>
+    
+    <div class="quiz-container score-screen" id="score-screen">
+        <h2>Quiz Completed!</h2>
+        <p class="result" id="final-score"></p>
+        <button class="start-button" onclick="restartQuiz()">Restart Quiz</button>
+        <button class="start-button" onclick="backToHome()">Back to Home</button>
+    </div>
+
+    <script>
+        const quizData = {
+        easy: [
+            { question: "What is 2 + 2?", options: ["3", "4", "5", "6"], answer: "4" },
+            { question: "What is the capital of France?", options: ["Rome", "Berlin", "Paris", "Madrid"], answer: "Paris" },
+            { question: "How many continents are there?", options: ["5", "6", "7", "8"], answer: "7" },
+            { question: "Which planet is known as the Red Planet?", options: ["Earth", "Mars", "Jupiter", "Venus"], answer: "Mars" },
+            { question: "What is the square root of 16?", options: ["2", "3", "4", "5"], answer: "4" }
+        ],
+        medium: [
+            { question: "Who wrote 'Hamlet'?", options: ["Shakespeare", "Dickens", "Austen", "Hemingway"], answer: "Shakespeare" },
+            { question: "What is the largest planet?", options: ["Mars", "Jupiter", "Venus", "Saturn"], answer: "Jupiter" },
+            { question: "Which element has the chemical symbol 'O'?", options: ["Oxygen", "Gold", "Iron", "Silver"], answer: "Oxygen" },
+            { question: "What year did World War II end?", options: ["1945", "1939", "1918", "1960"], answer: "1945" },
+            { question: "How many sides does a hexagon have?", options: ["4", "5", "6", "7"], answer: "6" }
+        ],
+        hard: [
+            { question: "What is the speed of light?", options: ["299,792 km/s", "150,000 km/s", "1,000,000 km/s", "500,000 km/s"], answer: "299,792 km/s" },
+            { question: "Who discovered gravity?", options: ["Newton", "Einstein", "Galileo", "Tesla"], answer: "Newton" },
+            { question: "What is the capital of Canada?", options: ["Toronto", "Vancouver", "Montreal", "Ottawa"], answer: "Ottawa" },
+            { question: "Which element has the highest melting point?", options: ["Iron", "Tungsten", "Gold", "Silver"], answer: "Tungsten" },
+            { question: "What is the square root of 121?", options: ["9", "10", "11", "12"], answer: "11" }
+        ],
+        impossible: [
+            { question: "What is the value of pi to 5 decimal places?", options: ["3.14159", "3.14059", "3.14106", "3.14259"], answer: "3.14159" },
+            { question: "Which country has the most official languages?", options: ["Switzerland", "India", "South Africa", "Belgium"], answer: "South Africa" },
+            { question: "What is the fastest bird in the world?", options: ["Peregrine Falcon", "Golden Eagle", "Bald Eagle", "Harpy Eagle"], answer: "Peregrine Falcon" },
+            { question: "What is the most expensive metal?", options: ["Gold", "Platinum", "Rhodium", "Iridium"], answer: "Rhodium" },
+            { question: "Who developed the theory of relativity?", options: ["Einstein", "Newton", "Galileo", "Fermi"], answer: "Einstein" }
+        ],
+        asian: [
+    { question: "What is the square root of 987654321?", options: ["31427", "49758", "55644", "31431"], answer: "31427" },
+    { question: "What is the value of Pi to 20 decimal places?", options: ["3.14159265358979323846", "3.14159265358979323847", "3.14159265358979323849", "3.14159265358979323845"], answer: "3.14159265358979323846" },
+    { question: "What is the 10th prime number?", options: ["29", "31", "37", "41"], answer: "29" },
+    { question: "Which number is a Fibonacci number: 156, 233, 289, 391?", options: ["233", "156", "289", "391"], answer: "233" },
+    { question: "What is the 100th Fibonacci number?", options: ["354224848179261915075", "354224848179261915074", "354224848179261915078", "354224848179261915073"], answer: "354224848179261915075" }
+        ]
+    };
+
+    function startQuiz(level) {
+        selectedLevel = level;
+        document.getElementById("start-screen").style.display = "none";
+        document.getElementById("quiz-container").style.display = "block";
+        currentQuestionIndex = 0;
+        score = 0;
+        timeRemaining = level === 'impossible' || level === 'asian' ? 60 : 30; // 1 minute timer for Impossible and Asian
+        loadQuestion();
+        startTimer();
+    }
+    
+    function startTimer() {
+        document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+        timer = setInterval(function() {
+            timeRemaining--;
+            document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+            if (timeRemaining <= 0) {
+                clearInterval(timer);
+                checkAnswer(""); // Auto-move to the next question if time runs out
+            }
+        }, 1000);
+    }
+
+
+        
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let selectedLevel = "easy";
+        let timer;
+        let timeRemaining = 30;
+
+        function startQuiz(level) {
+            selectedLevel = level;
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("quiz-container").style.display = "block";
+            currentQuestionIndex = 0;
+            score = 0;
+            timeRemaining = 30;
+            loadQuestion();
+            startTimer();
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= quizData[selectedLevel].length) {
+                showScoreScreen();
+                return;
+            }
+            const currentQuestion = quizData[selectedLevel][currentQuestionIndex];
+            document.getElementById("question").textContent = currentQuestion.question;
+            const optionsElement = document.getElementById("options");
+            optionsElement.innerHTML = "";
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsElement.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected) {
+            clearInterval(timer);
+            const correctAnswer = quizData[selectedLevel][currentQuestionIndex].answer;
+            if (selected === correctAnswer) {
+                score++;
+            }
+            currentQuestionIndex++;
+            loadQuestion();
+            startTimer(); // Restart timer for the next question
+        }
+
+        function startTimer() {
+            document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+            timer = setInterval(function() {
+                timeRemaining--;
+                document.getElementById("timer").textContent = `Time: ${timeRemaining}s`;
+                if (timeRemaining <= 0) {
+                    clearInterval(timer);
+                    checkAnswer(""); // Auto-move to the next question if time runs out
+                }
+            }, 1000);
+        }
+
+        function showScoreScreen() {
+            document.getElementById("quiz-container").style.display = "none";
+            document.getElementById("score-screen").style.display = "block";
+            document.getElementById("final-score").textContent = `You scored ${score} out of 5!`;
+        }
+
+        function restartQuiz() {
+            startQuiz(selectedLevel);
+        }
+
+        function backToHome() {
+            document.getElementById("score-screen").style.display = "none";
+            document.getElementById("start-screen").style.display = "block";
+        }
+    </script>
+</body>
+</html>
